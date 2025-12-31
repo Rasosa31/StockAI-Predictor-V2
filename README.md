@@ -1,5 +1,52 @@
 # Stock Prediction Capstone: Deep Learning & Serverless
+====================
+# 🤖 StockAI Predictor V3 Pro: Inteligencia Artificial Multi-Temporal
 
+![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)
+![TensorFlow](https://img.shields.io/badge/TensorFlow-2.x-orange.svg)
+![Streamlit](https://img.shields.io/badge/Streamlit-App-ff4b4b.svg)
+
+## 📈 Sobre el Proyecto
+StockAI Predictor es una plataforma de análisis financiero avanzada que utiliza redes neuronales recurrentes (**LSTM**) para predecir tendencias de precios. Esta **Versión 3 Pro** permite realizar análisis en múltiples marcos de tiempo (**Diario, Semanal y Mensual**) con una precisión adaptada tanto al mercado de acciones como al de divisas (Forex).
+
+## ✨ Características Principales
+- **Cerebro Multiactivo:** Analiza Acciones, Criptomonedas, Commodities y Forex.
+- **Análisis Multi-Temporal:** Predicciones a corto, mediano y largo plazo.
+- **Precisión Forex (Pips):** Visualización automática de hasta 4 decimales para pares de divisas.
+- **Gráficos Interactivos:** Visualización profesional con proyección de tendencia futura.
+
+---
+
+## 🚀 Guía para Correr el Proyecto (Para no expertos)
+
+Si es la primera vez que usas Python o GitHub, sigue estos pasos para ver la App funcionando en tu propia computadora:
+
+### 1. Preparación del terreno
+Asegúrate de tener instalado **Python** (descárgalo en [python.org](https://www.python.org/downloads/)). Durante la instalación, marca la casilla que dice **"Add Python to PATH"**.
+
+### 2. Descargar el proyecto
+- Ve al botón verde que dice **"Code"** arriba en esta página de GitHub.
+- Selecciona **"Download ZIP"**.
+- Descomprime el archivo en una carpeta de tu computadora (por ejemplo, en el Escritorio).
+
+### 3. Abrir la Terminal (Consola)
+- **En Windows:** Abre el menú de inicio, escribe `cmd` y presiona Enter.
+- **En Mac:** Presiona `Comando + Espacio`, escribe `Terminal` y presiona Enter.
+- Escribe `cd` seguido de un espacio, y arrastra la carpeta del proyecto dentro de la terminal. Presiona Enter.
+
+### 4. Instalar las herramientas necesarias
+Copia y pega este comando en tu terminal y presiona Enter (esto descargará la IA y los gráficos):
+```bash
+pip install -r requirements.txt
+
+5. ¡Lanzar la aplicación!
+
+Finalmente, escribe este comando:
+
+Bash
+streamlit run app/app.py
+Se abrirá automáticamente una pestaña en tu navegador con la App lista para usar. ¡Solo escribe un Ticker (como AAPL o EURUSD=X) y disfruta del análisis!
+=====================
 This project is a Capstone implementation for the Machine Learning course. It upgrades the Midterm Project by introducing **Deep Learning (LSTM)**, **Advanced Technical Indicators**, and **Serverless Deployment (AWS Lambda)**.
 
 ## Project Structure
