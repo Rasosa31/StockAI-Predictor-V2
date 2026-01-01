@@ -1,160 +1,58 @@
-# Stock Prediction Capstone: Deep Learning & Serverless
-====================
-# 🤖 StockAI Predictor V3 Pro: Inteligencia Artificial Multi-Temporal
+# 🤖 StockAI V3 Pro: Inteligencia Multi-Indicador Adaptativa
 
-![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)
-![TensorFlow](https://img.shields.io/badge/TensorFlow-2.x-orange.svg)
-![Streamlit](https://img.shields.io/badge/Streamlit-App-ff4b4b.svg)
+StockAI V3 Pro es una herramienta avanzada de análisis financiero que utiliza Redes Neuronales Recurrentes (LSTM) combinadas con indicadores técnicos clásicos (RSI y Medias Móviles) para proyectar tendencias de precios en activos financieros.
 
-## 📈 Sobre el Proyecto
-StockAI Predictor es una plataforma de análisis financiero avanzada que utiliza redes neuronales recurrentes (**LSTM**) para predecir tendencias de precios. Esta **Versión 3 Pro** permite realizar análisis en múltiples marcos de tiempo (**Diario, Semanal y Mensual**) con una precisión adaptada tanto al mercado de acciones como al de divisas (Forex).
+## 🚀 Características Principales
+* **Análisis Multivariante**: El modelo no solo mira el precio, sino también el **RSI** y las **SMA 100/200** para mayor precisión.
+* **Motor Adaptativo**: Capacidad única para ajustar el cálculo de indicadores en activos jóvenes o marcos de tiempo con poco historial (como el mensual).
+* **Backtesting Integrado**: Permite validar la precisión del modelo (RMSE) antes de realizar proyecciones futuras.
+* **Interfaz Profesional**: Dashboard interactivo construido en Streamlit con visualizaciones dinámicas de Plotly.
 
-## ✨ Características Principales
-- **Cerebro Multiactivo:** Analiza Acciones, Criptomonedas, Commodities y Forex.
-- **Análisis Multi-Temporal:** Predicciones a corto, mediano y largo plazo.
-- **Precisión Forex (Pips):** Visualización automática de hasta 4 decimales para pares de divisas.
-- **Gráficos Interactivos:** Visualización profesional con proyección de tendencia futura.
+## 📊 Hallazgos Técnicos (EDA)
+Durante el desarrollo y las pruebas (backtesting), se determinó que:
+* **Precisión en Estabilidad**: En activos con tendencias cíclicas como Ecopetrol (EC), el modelo logra un **RMSE Diario de ~0.43**, demostrando alta fiabilidad.
+* **Desempeño en Volatilidad**: En activos de alto crecimiento como NVIDIA (NVDA), la IA actúa como un seguidor de tendencia robusto, capturando la dirección general a pesar de la volatilidad extrema.
+* **Optimizaciones**: La inclusión del RSI ayudó a la red LSTM a prever puntos de agotamiento de tendencia con mayor claridad que los modelos univariantes.
 
 ---
 
-## 🚀 Guía para Correr el Proyecto (Para no expertos)
+## 📖 Manual de Usuario
 
-Si es la primera vez que usas Python o GitHub, sigue estos pasos para ver la App funcionando en tu propia computadora:
+### 1. Instalación
+Para ejecutar este proyecto localmente, asegúrate de tener Python 3.9+ instalado y sigue estos pasos:
 
-### 1. Preparación del terreno
-Asegúrate de tener instalado **Python** (descárgalo en [python.org](https://www.python.org/downloads/)). Durante la instalación, marca la casilla que dice **"Add Python to PATH"**.
+1. Clona el repositorio.
+2. Instala las dependencias:
+   ```bash
+   pip install -r requirements.txt
 
-### 2. Descargar el proyecto
-- Ve al botón verde que dice **"Code"** arriba en esta página de GitHub.
-- Selecciona **"Download ZIP"**.
-- Descomprime el archivo en una carpeta de tu computadora (por ejemplo, en el Escritorio).
-
-### 3. Abrir la Terminal (Consola)
-- **En Windows:** Abre el menú de inicio, escribe `cmd` y presiona Enter.
-- **En Mac:** Presiona `Comando + Espacio`, escribe `Terminal` y presiona Enter.
-- Escribe `cd` seguido de un espacio, y arrastra la carpeta del proyecto dentro de la terminal. Presiona Enter.
-
-### 4. Instalar las herramientas necesarias
-Copia y pega este comando en tu terminal y presiona Enter (esto descargará la IA y los gráficos):
-```bash
-pip install -r requirements.txt
-
-5. ¡Lanzar la aplicación!
-
-Finalmente, escribe este comando:
+   Lanza la aplicación:
 
 Bash
 streamlit run app/app.py
-Se abrirá automáticamente una pestaña en tu navegador con la App lista para usar. ¡Solo escribe un Ticker (como AAPL o EURUSD=X) y disfruta del análisis!
-=====================
-This project is a Capstone implementation for the Machine Learning course. It upgrades the Midterm Project by introducing **Deep Learning (LSTM)**, **Advanced Technical Indicators**, and **Serverless Deployment (AWS Lambda)**.
+2. Configuración del Análisis
 
-## Project Structure
-```
-stock_prediction_capstone/
-├── app/                # Deployment code (Lambda/Docker)
-│   ├── app.py          # FastAPI handler adapted with Mangum
-│   └── Dockerfile      # Container definition
-├── data/               # Local data storage
-├── models/             # Saved models and scalers
-├── notebooks/          # Exploratory Analysis and Training Notebooks
-│   ├── eda.ipynb       # EDA visualizations
-│   └── train_lstm.ipynb# Model training playground
-├── src/                # Project source code
-│   ├── model.py        # LSTM architecture & training loop
-│   ├── strategy.py     # Buy/Sell signal & Risk Management logic
-│   └── utils.py        # Data loading & Indicator calculation
-├── train.py            # Script for reproducing training
-├── requirements.txt    # Dependencies
-└── README.md           # This documentation
-```
+Selección de Activo: Puedes elegir uno de la lista predefinida o ingresar un ticker de Yahoo Finance manualmente (ej. MELI, ETH-USD, GC=F).
 
-## Features
-- **Deep Learning**: Uses an LSTM (Long Short-Term Memory) neural network for time-series forecasting.
-- **Technical Analysis**: Incorporates SMA, RSI, and Bollinger Bands.
-- **Trading Strategy**: Generates BUY/SELL signals with automatic Stop Loss and Take Profit levels based on volatility.
-- **Serverless API**: Deploys as a Docker container on AWS Lambda with FastAPI and Mangum.
+Marco de Tiempo: Selecciona entre Diario, Semanal o Mensual. El sistema adaptará automáticamente el motor de descarga de datos.
 
-## Setup & Local Execution
+3. Ejecución de Proyecciones
 
-1. **Install Dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
+Haz clic en "🚀 Ejecutar Proyección".
 
-2. **Run EDA**
-   Open `notebooks/eda.ipynb` in Jupyter/VSCode or run:
-   ```bash
-   jupyter notebook notebooks/eda.ipynb
-   ```
+La IA entrenará una red LSTM en tiempo real con los últimos datos disponibles.
 
-3. **Train Model**
-   You can use the notebook `notebooks/train_lstm.ipynb` or the script:
-   ```bash
-   python train.py --ticker AAPL --epochs 20
-   ```
-   This saves `lstm_model.h5` and `scaler.pkl` to `models/`.
+Observarás tres métricas clave: Precio Actual, Proyección IA y % de Cambio Esperado.
 
-## Deployment (AWS Lambda)
+4. Uso del Backtesting (Opcional)
 
-The application is containerized for AWS Lambda to handle large dependencies like TensorFlow.
+Para validar qué tan bien funciona la IA con el activo seleccionado:
 
-1. **Build Docker Image**
-   ```bash
-   docker build -t stock-pred -f app/Dockerfile .
-   ```
+Activa el checkbox "Activar Análisis de Backtesting" en la barra lateral.
 
-2. **Run Locally (Test)**
-   ```bash
-   docker run -p 8080:8080 stock-pred
-   ```
-   Send a request:
-   ```bash
-   curl -X POST "http://localhost:8080/2015-03-31/functions/function/invocations" -d '{"body": "{\"ticker\": \"AAPL\"}"}'
-   ```
-   *Note: The local Lambda emulator endpoint format differs slightly from direct API Gateway calls.*
+Presiona "🔄 Ejecutar Prueba de Precisión".
 
-3. **Deploy to AWS**
-   - Push image to AWS ECR.
-   - Create Lambda function from Container Image.
-   - Set up API Gateway to trigger the Lambda.
+El sistema comparará los últimos 30 periodos reales contra las predicciones de la IA y te entregará el valor RMSE (entre más bajo, mejor).
 
-## Strategy Logic
-The model predicts the next day's Close price.
-- **Signal**: BUY if predicted > current + threshold, SELL if predicted < current - threshold.
-- **Risk Management**: Stop Loss and Take Profit are calculated using volatility ($2 \times \sigma$).
-
-## Deployment (Render)
-
-This project can be deployed to Render as a simple Python web service using `uvicorn`.
-
-Quick steps:
-
-1. Ensure the model files are available. The app expects:
-   - `models/lstm_model.h5`
-   - `models/scaler.pkl`
-
-   Options to provide models:
-   - Commit small model files into the `models/` folder in the repo (not recommended for large files).
-   - Store models in an object storage (e.g., AWS S3) and set a startup step to download them. Add env vars like `MODEL_S3_URL` and change the app to download on startup.
-
-2. Connect your GitHub repo to Render: https://dashboard.render.com/new
-
-3. If you include `render.yaml` at the repo root (already included), Render will auto-create a service using that spec. The `render.yaml` in this repo sets the start command to:
-   ```bash
-   uvicorn app.app:app --host 0.0.0.0 --port $PORT
-   ```
-
-4. Required environment variables (set these in Render Dashboard or in `render.yaml` `envVars`):
-   - `MODEL_PATH` (default `models/lstm_model.h5`)
-   - `SCALER_PATH` (default `models/scaler.pkl`)
-
-5. Deploy: Render will build using `pip install -r requirements.txt` and then run the start command. Watch the service logs to confirm the model loads on startup.
-
-Notes & troubleshooting:
-- If your model files are large, use S3 and modify `app/app.py` to download and cache the files at startup.
-- If you prefer a Docker-based deploy, the repo includes `app/Dockerfile` for an AWS Lambda container image; for Render you can alternatively provide a Dockerfile that runs `uvicorn` instead.
-
-If you want, I can:
-- Add a small startup helper in `app/app.py` to download models from an S3 URL when `MODEL_S3_URL` is set.
-- Create a second Dockerfile optimized for running on Render with `uvicorn`.
+🛠️ Requisitos Técnicos
+El proyecto requiere las versiones específicas listadas en requirements.txt para garantizar la compatibilidad entre TensorFlow y NumPy.
