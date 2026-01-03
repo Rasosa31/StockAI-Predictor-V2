@@ -1,58 +1,79 @@
-# 🤖 StockAI V3 Pro: Inteligencia Multi-Indicador Adaptativa
+📈 StockAI V3 Pro: Adaptive Multi-Indicator Intelligence
+StockAI V3 Pro is a financial predictive analysis platform that merges Deep Learning with traditional technical analysis. It utilizes a Long Short-Term Memory (LSTM) Recurrent Neural Network architecture to process time-series data and project price trends in global financial markets.
 
-StockAI V3 Pro es una herramienta avanzada de análisis financiero que utiliza Redes Neuronales Recurrentes (LSTM) combinadas con indicadores técnicos clásicos (RSI y Medias Móviles) para proyectar tendencias de precios en activos financieros.
+🔗 Quick Links
 
-## 🚀 Características Principales
-* **Análisis Multivariante**: El modelo no solo mira el precio, sino también el **RSI** y las **SMA 100/200** para mayor precisión.
-* **Motor Adaptativo**: Capacidad única para ajustar el cálculo de indicadores en activos jóvenes o marcos de tiempo con poco historial (como el mensual).
-* **Backtesting Integrado**: Permite validar la precisión del modelo (RMSE) antes de realizar proyecciones futuras.
-* **Interfaz Profesional**: Dashboard interactivo construido en Streamlit con visualizaciones dinámicas de Plotly.
+Web Deployment: https://stockai-predictor-rasosa.streamlit.app
 
-## 📊 Hallazgos Técnicos (EDA)
-Durante el desarrollo y las pruebas (backtesting), se determinó que:
-* **Precisión en Estabilidad**: En activos con tendencias cíclicas como Ecopetrol (EC), el modelo logra un **RMSE Diario de ~0.43**, demostrando alta fiabilidad.
-* **Desempeño en Volatilidad**: En activos de alto crecimiento como NVIDIA (NVDA), la IA actúa como un seguidor de tendencia robusto, capturando la dirección general a pesar de la volatilidad extrema.
-* **Optimizaciones**: La inclusión del RSI ayudó a la red LSTM a prever puntos de agotamiento de tendencia con mayor claridad que los modelos univariantes.
+Project Status: Production / Stable (Python 3.11).
 
----
+📝 1. Problem Description
+Predicting financial markets is a complex challenge due to high volatility and the non-linear nature of data. Many traditional models fail because they ignore momentum (RSI) or long-term trends (Moving Averages).
 
-## 📖 Manual de Usuario
+StockAI V3 Pro solves this through:
 
-### 1. Instalación
-Para ejecutar este proyecto localmente, asegúrate de tener Python 3.9+ instalado y sigue estos pasos:
+Multivariate Analysis: The model integrates the Relative Strength Index (RSI) and Simple Moving Averages (SMA 100/200) as input features for the neural network.
 
-1. Clona el repositorio.
-2. Instala las dependencias:
-   ```bash
-   pip install -r requirements.txt
+Dynamic Training: The app trains a neural network in real-time using the latest data from Yahoo Finance, adapting to current market conditions.
 
-   Lanza la aplicación:
+⚙️ 2. Internal Mechanics and Structure
+AI Architecture
+
+The "brain" of the app is an LSTM network designed to remember long-term historical patterns.
+
+Extraction: Downloads data via yfinance.
+
+Feature Engineering: Calculates technical indicators (RSI, SMA) in real-time.
+
+Scaling: Normalizes data using MinMaxScaler for optimal learning.
+
+Prediction: Projects the value for the next period based on a sliding observation window.
+
+StockAI-Predictor-V2/
+├── .python-version          # Forces Python 3.11 for cloud stability
+├── requirements.txt         # Core dependencies (TensorFlow-CPU, Streamlit, etc.)
+├── app/
+│   └── app.py               # Main Entry point for the Streamlit Dashboard
+├── src/                     # Source code logic
+│   ├── model.py             # LSTM Architecture
+│   ├── data_downloader.py   # Yahoo Finance API integration
+│   ├── strategy.py          # Technical indicators calculation
+│   ├── train.py             # Model training and scaling logic
+│   └── backtesting.py       # Validation and RMSE calculation engine
+├── models/                  # Saved .h5 models and scalers
+└── notebooks/               # EDA (Exploratory Data Analysis) and research
+
+
+🚀 3. Local Execution Guide
+Prerequisites
+
+Python 3.11 installed.
+
+Active internet connection.
+
+Installation Steps
+
+Clone the Project:
+
+Bash
+git clone https://github.com/Rasosa31/StockAI-Predictor-V2.git
+cd StockAI-Predictor-V2
+Install Dependencies:
+
+Bash
+pip install -r requirements.txt
+Launch the Application:
 
 Bash
 streamlit run app/app.py
-2. Configuración del Análisis
+📊 4. Technical Findings and EDA
+Metric Reliability: The model uses RMSE (Root Mean Square Error). A low RMSE indicates the AI tracked the actual price trends closely during backtesting.
 
-Selección de Activo: Puedes elegir uno de la lista predefinida o ingresar un ticker de Yahoo Finance manualmente (ej. MELI, ETH-USD, GC=F).
+Optimization: The system was optimized for Streamlit Cloud by using tensorflow-cpu to manage memory constraints effectively.
 
-Marco de Tiempo: Selecciona entre Diario, Semanal o Mensual. El sistema adaptará automáticamente el motor de descarga de datos.
+🚀 5. Future Improvements (Roadmap)
+MetaTrader 5 (MT5) Integration: Development of a bridge script for automated execution in Forex (FX) accounts.
 
-3. Ejecución de Proyecciones
+Sentiment Module: Using NLP to include news sentiment as an additional input variable.
 
-Haz clic en "🚀 Ejecutar Proyección".
-
-La IA entrenará una red LSTM en tiempo real con los últimos datos disponibles.
-
-Observarás tres métricas clave: Precio Actual, Proyección IA y % de Cambio Esperado.
-
-4. Uso del Backtesting (Opcional)
-
-Para validar qué tan bien funciona la IA con el activo seleccionado:
-
-Activa el checkbox "Activar Análisis de Backtesting" en la barra lateral.
-
-Presiona "🔄 Ejecutar Prueba de Precisión".
-
-El sistema comparará los últimos 30 periodos reales contra las predicciones de la IA y te entregará el valor RMSE (entre más bajo, mejor).
-
-🛠️ Requisitos Técnicos
-El proyecto requiere las versiones específicas listadas en requirements.txt para garantizar la compatibilidad entre TensorFlow y NumPy.
+Developed by Ramiro Sosa - Capstone Final Project
