@@ -29,6 +29,8 @@ Scaling: Normalizes data using MinMaxScaler for optimal learning.
 
 Prediction: Projects the value for the next period based on a sliding observation window.
 
+
+``` tex
 StockAI-Predictor-V2/
 ├── .python-version          # Forces Python 3.11 for cloud stability
 ├── requirements.txt         # Core dependencies (TensorFlow-CPU, Streamlit, etc.)
