@@ -28,16 +28,24 @@ st.title("🤖 StockAI V3: Inteligencia Multi-Indicador")
 
 with st.sidebar:
     st.header("⚙️ Configuración")
-    ticker = st.text_input("Ticker (ej: BTC-USD, NVDA, EURUSD=X):", "EURUSD=X").upper()
-    interval_label = st.selectbox("Marco de Tiempo:", ["Diario", "Semanal", "Mensual"])
+    ticker = st.text_input(
+        "Enter Stock Ticker:", 
+    value="AAPL", 
+    help="Important: Use only Yahoo Finance symbols (e.g., 'AAPL', 'EURUSD=X', 'BTC-USD', 'GC=F')."
+)
+st.caption("⚠️ Make sure the ticker exists on finance.yahoo.com")
+        
+ #       "Ticker (ej: BTC-USD, NVDA, EURUSD=X):", "EURUSD=X").upper()
+
+    interval_label = st.selectbox("Timeframe:", ["Daily", "Weekly", "Monthly"])
     
-    interval_map = {"Diario": "1d", "Semanal": "1wk", "Mensual": "1mo"}
+    interval_map = {"Daily": "1d", "Weekly": "1wk", "Monthly": "1mo"}
     interval_code = interval_map[interval_label]
     
     st.divider()
-    st.header("🛠️ Herramientas Extra")
+    st.header("🛠️ Extra Tool")
     # PUNTO 3: Botón para activar/desactivar el Backtesting
-    show_backtest = st.checkbox("Activar Análisis de Backtesting")
+    show_backtest = st.checkbox("Activate Backtesting Analysis")
 
 # --- 3. Motor de Datos Adaptativo ---
 data = yf.download(ticker, period="max", interval=interval_code)
@@ -66,8 +74,8 @@ if not data.empty and len(data) > 30:
     scaled_data = scaler.fit_transform(df_filtered.values)
 
     # 4. Predicción Principal
-    if st.button(f"🚀 Ejecutar Proyección {interval_label}"):
-        with st.spinner(f"Analizando {ticker}..."):
+    if st.button(f"🚀 Run Projection {interval_label}"):
+        with st.spinner(f"Analyzing {ticker}..."):
             window = 60 if len(scaled_data) > 60 else len(scaled_data) // 2
             X, y = [], []
             for i in range(window, len(scaled_data)):
@@ -90,32 +98,32 @@ if not data.empty and len(data) > 30:
             # PUNTO 1: Restaurada la presentación de métricas triple
             st.divider()
             m1, m2, m3 = st.columns(3)
-            m1.metric("Precio Actual", f"${current_price:,.{precision}}")
-            m2.metric(f"Proyección {interval_label}", f"${pred_final:,.{precision}}", f"{diff:,.{precision}}")
-            m3.metric("Movimiento Esperado", f"{pct:.2f}%")
+            m1.metric("Current Price", f"${current_price:,.{precision}}")
+            m2.metric(f"Projection {interval_label}", f"${pred_final:,.{precision}}", f"{diff:,.{precision}}")
+            m3.metric("Expected Movement", f"{pct:.2f}%")
             
             # Gráfico Principal
             fig = go.Figure()
-            fig.add_trace(go.Scatter(x=df_filtered.index[-120:], y=df_filtered['Close'][-120:], name="Histórico"))
+            fig.add_trace(go.Scatter(x=df_filtered.index[-120:], y=df_filtered['Close'][-120:], name="Historical"))
             
             # Línea de proyección
             delta_time = pd.Timedelta(days=1 if interval_code=="1d" else 7 if interval_code=="1wk" else 30)
             fig.add_trace(go.Scatter(
                 x=[df_filtered.index[-1], df_filtered.index[-1] + delta_time], 
                 y=[current_price, pred_final], 
-                name="Predicción IA", 
+                name="IA Prediction", 
                 line=dict(color='orange', dash='dash', width=3)
             ))
             
-            fig.update_layout(template="plotly_dark", title=f"Tendencia de {ticker} ({interval_label})")
+            fig.update_layout(template="plotly_dark", title=f"Trend of {ticker} ({interval_label})")
             st.plotly_chart(fig, use_container_width=True)
 
     # PUNTO 2 y 3: Backtesting Condicional y Multi-temporal
     if show_backtest:
         st.divider()
-        st.subheader(f"📊 Backtesting Histórico ({interval_label})")
-        if st.button("🔄 Ejecutar Prueba de Precisión"):
-            with st.spinner("Evaluando rendimiento pasado..."):
+        st.subheader(f"📊 Historical Backtesting ({interval_label})")
+        if st.button("🔄 Run Accuracy Test"):
+            with st.spinner("Evaluating past performance..."):
                 test_days = 30
                 window = 60 if len(scaled_data) > 60 else 10
                 
@@ -140,7 +148,7 @@ if not data.empty and len(data) > 30:
                 real_b = df_filtered['Close'].values[-test_days:]
                 
                 rmse = np.sqrt(np.mean((preds_b - real_b)**2))
-                st.info(f"Precisión del Modelo en marco {interval_label}: RMSE = {rmse:.4f}")
+                st.info(f"Model accuracy in timeframe {interval_label}: RMSE = {rmse:.4f}")
                 
                 fig_b = go.Figure()
                 fig_b.add_trace(go.Scatter(y=real_b, name="Real", line=dict(color='blue')))
@@ -148,4 +156,4 @@ if not data.empty and len(data) > 30:
                 fig_b.update_layout(template="plotly_dark", height=350)
                 st.plotly_chart(fig_b, use_container_width=True)
 else:
-    st.error("No hay suficientes datos históricos para este ticker o marco de tiempo.")
+    st.error("There is not enough historical data for this ticker or timeframe.")
