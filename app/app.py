@@ -8,7 +8,7 @@ from sklearn.preprocessing import MinMaxScaler
 import plotly.graph_objects as go
 import os
 
-# 1. Configuración de la página
+# 1. Page Configuration
 st.set_page_config(page_title="StockAI V3 Pro - Elite Edition", layout="wide")
 
 def train_multivariate_model(X, y):
@@ -23,44 +23,44 @@ def train_multivariate_model(X, y):
     model.fit(X, y, epochs=12, batch_size=32, verbose=0)
     return model
 
-# 2. Interfaz y Sidebar
-st.title("🤖 StockAI V3: Inteligencia Multi-Indicador")
+# 2. Interface and Sidebar
+st.title("🤖 StockAI V3: Multi-Indicator Intelligence")
 
 with st.sidebar:
-    st.header("⚙️ Configuración")
+    st.header("⚙️ Analysis Settings")
     ticker = st.text_input(
         "Enter Stock Ticker:", 
-    value="AAPL", 
-    help="Important: Use only Yahoo Finance symbols (e.g., 'AAPL', 'EURUSD=X', 'BTC-USD', 'GC=F')."
-)
-st.caption("⚠️ Make sure the ticker exists on finance.yahoo.com")
-        
- #       "Ticker (ej: BTC-USD, NVDA, EURUSD=X):", "EURUSD=X").upper()
+        value="AAPL", 
+        help="Important: Use only Yahoo Finance symbols (e.g., 'AAPL', 'EURUSD=X', 'BTC-USD', 'GC=F')."
+    ).upper()
+    st.caption("⚠️ Make sure the ticker exists on finance.yahoo.com")
 
-    interval_label = st.selectbox("Timeframe:", ["Daily", "Weekly", "Monthly"])
+    interval_label = st.selectbox("Select Timeframe:", ["Daily", "Weekly", "Monthly"])
     
     interval_map = {"Daily": "1d", "Weekly": "1wk", "Monthly": "1mo"}
     interval_code = interval_map[interval_label]
     
     st.divider()
-    st.header("🛠️ Extra Tool")
-    # PUNTO 3: Botón para activar/desactivar el Backtesting
-    show_backtest = st.checkbox("Activate Backtesting Analysis")
+    st.header("🛠️ Extra Tools")
+    show_backtest = st.checkbox("Enable Backtesting Analysis")
 
-# --- 3. Motor de Datos Adaptativo ---
+# --- 3. Adaptive Data Engine ---
 data = yf.download(ticker, period="max", interval=interval_code)
-if isinstance(data.columns, pd.MultiIndex): data.columns = data.columns.get_level_values(0)
+if isinstance(data.columns, pd.MultiIndex): 
+    data.columns = data.columns.get_level_values(0)
 
 if not data.empty and len(data) > 30:
     df = data.copy()
-    total_velas = len(df)
+    total_candles = len(df)
     
-    w100 = 100 if total_velas >= 100 else max(2, total_velas // 2)
-    w200 = 200 if total_velas >= 200 else max(2, total_velas - 1)
+    # Dynamic SMA calculation based on asset history
+    w100 = 100 if total_candles >= 100 else max(2, total_candles // 2)
+    w200 = 200 if total_candles >= 200 else max(2, total_candles - 1)
     
     df['SMA_100'] = df['Close'].rolling(window=w100).mean()
     df['SMA_200'] = df['Close'].rolling(window=w200).mean()
     
+    # RSI Calculation
     delta = df['Close'].diff()
     gain = (delta.where(delta > 0, 0)).rolling(window=14).mean()
     loss = (-delta.where(delta < 0, 0)).rolling(window=14).mean()
@@ -73,9 +73,9 @@ if not data.empty and len(data) > 30:
     scaler = MinMaxScaler(feature_range=(0, 1))
     scaled_data = scaler.fit_transform(df_filtered.values)
 
-    # 4. Predicción Principal
-    if st.button(f"🚀 Run Projection {interval_label}"):
-        with st.spinner(f"Analyzing {ticker}..."):
+    # 4. Main Prediction
+    if st.button(f"🚀 Run {interval_label} Projection"):
+        with st.spinner(f"Analyzing {ticker} trends..."):
             window = 60 if len(scaled_data) > 60 else len(scaled_data) // 2
             X, y = [], []
             for i in range(window, len(scaled_data)):
@@ -87,7 +87,8 @@ if not data.empty and len(data) > 30:
             
             last_window = scaled_data[-window:].reshape(1, window, len(features))
             pred_scaled = model.predict(last_window)
-            dummy = np.zeros((1, len(features))); dummy[0, 0] = pred_scaled[0][0]
+            dummy = np.zeros((1, len(features)))
+            dummy[0, 0] = pred_scaled[0][0]
             pred_final = float(scaler.inverse_transform(dummy)[0][0])
             
             current_price = float(df_filtered['Close'].iloc[-1])
@@ -95,39 +96,39 @@ if not data.empty and len(data) > 30:
             pct = (diff / current_price) * 100
             precision = "4f" if current_price < 2 else "2f"
             
-            # PUNTO 1: Restaurada la presentación de métricas triple
+            # Metrics Presentation
             st.divider()
             m1, m2, m3 = st.columns(3)
             m1.metric("Current Price", f"${current_price:,.{precision}}")
-            m2.metric(f"Projection {interval_label}", f"${pred_final:,.{precision}}", f"{diff:,.{precision}}")
+            m2.metric(f"AI Prediction", f"${pred_final:,.{precision}}", f"{diff:,.{precision}}")
             m3.metric("Expected Movement", f"{pct:.2f}%")
             
-            # Gráfico Principal
+            # Main Chart
             fig = go.Figure()
-            fig.add_trace(go.Scatter(x=df_filtered.index[-120:], y=df_filtered['Close'][-120:], name="Historical"))
+            fig.add_trace(go.Scatter(x=df_filtered.index[-120:], y=df_filtered['Close'][-120:], name="Historical Price"))
             
-            # Línea de proyección
+            # Prediction line
             delta_time = pd.Timedelta(days=1 if interval_code=="1d" else 7 if interval_code=="1wk" else 30)
             fig.add_trace(go.Scatter(
                 x=[df_filtered.index[-1], df_filtered.index[-1] + delta_time], 
                 y=[current_price, pred_final], 
-                name="IA Prediction", 
+                name="AI Future Path", 
                 line=dict(color='orange', dash='dash', width=3)
             ))
             
-            fig.update_layout(template="plotly_dark", title=f"Trend of {ticker} ({interval_label})")
+            fig.update_layout(template="plotly_dark", title=f"{ticker} Performance Analysis ({interval_label})")
             st.plotly_chart(fig, use_container_width=True)
 
-    # PUNTO 2 y 3: Backtesting Condicional y Multi-temporal
+    # 5. Backtesting Analysis
     if show_backtest:
         st.divider()
         st.subheader(f"📊 Historical Backtesting ({interval_label})")
         if st.button("🔄 Run Accuracy Test"):
-            with st.spinner("Evaluating past performance..."):
+            with st.spinner("Calculating historical accuracy..."):
                 test_days = 30
                 window = 60 if len(scaled_data) > 60 else 10
                 
-                # Entrenamiento de prueba
+                # Test Training
                 X_b, y_b = [], []
                 train_data_b = scaled_data[:-test_days]
                 for i in range(window, len(train_data_b)):
@@ -136,24 +137,25 @@ if not data.empty and len(data) > 30:
                 
                 model_b = train_multivariate_model(np.array(X_b), np.array(y_b))
                 
-                # Segmento de test
+                # Test Segment
                 X_test = []
                 test_segment = scaled_data[-(test_days + window):]
                 for i in range(window, len(test_segment)):
                     X_test.append(test_segment[i-window:i, :])
                 
                 preds_b_scaled = model_b.predict(np.array(X_test))
-                dummy_b = np.zeros((len(preds_b_scaled), 4)); dummy_b[:, 0] = preds_b_scaled.flatten()
+                dummy_b = np.zeros((len(preds_b_scaled), 4))
+                dummy_b[:, 0] = preds_b_scaled.flatten()
                 preds_b = scaler.inverse_transform(dummy_b)[:, 0]
                 real_b = df_filtered['Close'].values[-test_days:]
                 
                 rmse = np.sqrt(np.mean((preds_b - real_b)**2))
-                st.info(f"Model accuracy in timeframe {interval_label}: RMSE = {rmse:.4f}")
+                st.info(f"Model Performance Score: RMSE = {rmse:.4f}")
                 
                 fig_b = go.Figure()
-                fig_b.add_trace(go.Scatter(y=real_b, name="Real", line=dict(color='blue')))
-                fig_b.add_trace(go.Scatter(y=preds_b, name="IA", line=dict(color='orange', dash='dot')))
-                fig_b.update_layout(template="plotly_dark", height=350)
+                fig_b.add_trace(go.Scatter(y=real_b, name="Actual Data", line=dict(color='blue')))
+                fig_b.add_trace(go.Scatter(y=preds_b, name="AI Prediction", line=dict(color='orange', dash='dot')))
+                fig_b.update_layout(template="plotly_dark", height=350, title="Backtesting: Reality vs Prediction")
                 st.plotly_chart(fig_b, use_container_width=True)
 else:
-    st.error("There is not enough historical data for this ticker or timeframe.")
+    st.error("Insufficient historical data to generate a projection for this asset.")
