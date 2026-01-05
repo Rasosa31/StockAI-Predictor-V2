@@ -75,7 +75,7 @@ Launch the Application:
 Bash
 Run in the terminal (be sure to stay inside the carpet project) and run the follow:
 ```
-streamlit run app/app.py
+python3 -m streamlit run app/app.py
 ```
 
 This action opens a box or message that allows you to launch the app's web interface.
